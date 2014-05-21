@@ -23,7 +23,9 @@ def sha256_file(fp, data=None):
 def sha256_string(s):
     return hashlib.sha256(s).hexdigest()
 
+
 xattrPaxPrefix = 'SCHILY.xattr.'
+
 
 class TarSum(object):
 
