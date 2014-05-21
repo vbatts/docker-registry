@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import collections
 import hashlib
 import logging
 
@@ -22,6 +23,7 @@ def sha256_file(fp, data=None):
 def sha256_string(s):
     return hashlib.sha256(s).hexdigest()
 
+xattrPaxPrefix = 'SCHILY.xattr.'
 
 class TarSum(object):
 
@@ -42,6 +44,14 @@ class TarSum(object):
                 if member.isdir() and not value.endswith('/'):
                     value += '/'
             header += '{0}{1}'.format(field, value)
+
+        # sorted list of all headers, but were only using the xattr ones
+        od = collections.OrderedDict(member.pax_headers)
+        while len(od) > 0:
+            item = od.popitem()
+            if not item[0].startswith(xattrPaxPrefix):
+                continue
+            header += '{0}{1}'.format(item[0], item[1])
         h = None
         try:
             if member.size > 0:
